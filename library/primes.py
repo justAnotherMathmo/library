@@ -3,7 +3,8 @@ from random import randint
 
 import numpy as np
 
-import basic
+from . import basic
+
 
 class CreatePrimes(object):
 
@@ -43,7 +44,7 @@ class CreatePrimes(object):
 
 class PrimeCount(object):
 
-    def __init__(self, m_bound=10**4, n_bound=10**6):
+    def __init__(self, m_bound=10**4, n_bound=10**6, **kwargs):
         # Some basic precomputation
         self.precomputed = {10 ** 11: 4118054813,
                             10 ** 12: 37607912018,
@@ -53,7 +54,9 @@ class PrimeCount(object):
                             5 * 10 ** 15: 142377417196364,
                             10 ** 16: 279238341033925
                             }
-        self.primes = CreatePrimes(n_bound, with_two=1)
+        self.primes = kwargs.pop('primes', None)
+        if self.primes is None:
+            self.primes = CreatePrimes(n_bound, with_two=1)
         self.prime_array = self.primes.as_array()
         primes_gen = self.primes.as_generator()
         count = 0
@@ -93,7 +96,8 @@ class PrimeCount(object):
         """The number of numbers <= m that are coprime to the first n prime numbers.
         Use for n < 1000 or so"""
         m = int(m)
-        if n == 0: return m
+        if n == 0:
+            return m
         result = self.meissel_memoize[n].get(m, None)
         if result is None:
             result = self._meissel_function_small(m, n-1) - self._meissel_function_small(m / self.prime_array[n-1], n-1)
@@ -105,7 +109,8 @@ class PrimeCount(object):
         Run for larger values where repeating isn't going to happen often. Use for n > 1000 or so"""
         m = int(m)
         # if m <= 10000: return meis104[n][m]
-        if n == 0: return m
+        if n == 0:
+            return m
         result = self.meissel_memoize[n].get(m, None)
         if result is None:
             result = 0
@@ -123,7 +128,7 @@ class PrimeCount(object):
                     stacks[N-1][M//prime_dividing] -= stacks[N][M]
                 del stacks[N]
             for M in stacks[0]:
-                res += M*stacks[0][M]
+                result += M*stacks[0][M]
         return result
 
 
@@ -161,14 +166,13 @@ class Factor(object):
     def small(self, num):
         """Prime factorises num (for small num)"""
         res = {}
-        index = 0
         ma = num ** 0.5 + 1
         for i in self.primes.as_array():
             if i > ma:
                 if num != 1: res[num] = 1
                 break
             if num % i == 0:
-                k = powFind(num, i)
+                k = basic.pow_find(num, i)
                 res[i] = k
                 num = num // i ** k
                 ma = num ** 0.5 + 1
@@ -180,12 +184,12 @@ class Factor(object):
         y, r, q, G = randint(N//4, 3*N//4), 1, 1, 1
         while G == 1:
             x = y
-            for i in range(1, r+1):
+            for _ in range(r):
                 y = self._f(y, N)
             k = 0
             while (G == 1) and (k < r):
                 ys = y
-                for i in range(1, min(m, r-k) + 1):
+                for _ in range(min(m, r-k)):
                     y = self._f(y, N)
                     q = (q * abs(x - y)) % N
                 G = basic.gcd(q, N)
@@ -196,10 +200,10 @@ class Factor(object):
             while True:
                 ys = self._f(ys)
                 G = basic.gcd(abs(x - ys), N)
-                if G > 1: break
+                if G > 1:
+                    break
         if G == N:
             raise UserWarning('Number not factored')
-            return None
         return G
 
 
@@ -216,7 +220,8 @@ def is_prime_prob(num, accuracy=10):
             if pow(a, 2**r*d, num) == num-1:
                 check = 0
                 break
-        if check: return 0
+        if check:
+            return 0
     return 1
 
 

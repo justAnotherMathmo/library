@@ -1,0 +1,1 @@
+Library of commonly used functions (mostly for Project Euler)

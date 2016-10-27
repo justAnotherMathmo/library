@@ -8,8 +8,9 @@ from math import cos, pi, sin
 import numpy as np
 
 # Custom Libraries
-import basic
-import primes
+from . import primes
+from . import basic
+
 
 class TestBasicFunctions(unittest.TestCase):
 

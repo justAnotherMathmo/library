@@ -20,9 +20,9 @@ def gcd_coeff(a, b):
 def mod_inv(num, mod):
     """Finds num^-1 modulo mod"""
     r1, r2, a, b= num%mod, mod, 1, 0
-    while r1!=1:
+    while r1 != 1:
         r1, r2, a, b = r2%r1, r1, b-a*(r2//r1), a
-    return a%mod
+    return a % mod
 
 
 def pow_find(num, div):
@@ -32,7 +32,8 @@ def pow_find(num, div):
     count = 0
     power_check = div
     while True:
-        if num % power_check != 0: break
+        if num % power_check != 0:
+            break
         power_check *= div
         count += 1
     return count
@@ -45,7 +46,8 @@ def int_sqrt(n, floor = 1):
     while y < x:
         x = y
         y = (x + n // x) >> 1
-    if floor: return x
+    if floor:
+        return x
     else:
         if x**2 < n:
             return x+1
@@ -69,14 +71,18 @@ def newton_rhapson(func, func_d, x0, tol=10**(-9), itera=None):
 def binary_search(func, x_min, x_max, tol=10**(-13), itera=None):
     """Finds an approximate root to func within the range x_min to x_max via a binary search
     If itera is not None, will limit to itera iterations, as well as tolerance"""
-    l_sign, r_sign = 2*(func(x_min) > 0) - 1, 2*(func(x_max) > 0) -1
+    l_sign, r_sign = 2*(func(x_min) > 0) - 1, 2*(func(x_max) > 0) - 1
     if l_sign == r_sign:
         raise ValueError("func(x_min) and func(x_max) must have opposite signs")
-    while abs(func(x_max)) > tol:
+    x_new = x_max
+    loop_count = 0
+    while abs(func(x_new)) > tol or (itera is not None and loop_count == itera):
         x_new = (x_min + x_max)/2
         n_sign = 2*(func(x_new) > 0) - 1
         if n_sign == l_sign:
             x_min = x_new
         else:
             x_max = x_new
+        loop_count += 1
+
     return x_new

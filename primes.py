@@ -38,6 +38,14 @@ class CreatePrimes(object):
             result[val] = True
         return result
 
+    def as_indexed_dict(self):
+        result = {}
+        index = 0
+        for val in self.as_array():
+            result[index] = int(val)
+            index += 1
+        return result
+
     def as_deque(self):
         return deque(self.as_array())
 

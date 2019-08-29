@@ -8,8 +8,7 @@ from math import cos, pi, sin
 import numpy as np
 
 # Custom Libraries
-from . import primes
-from . import basic
+from library import basic, primes
 
 
 class TestBasicFunctions(unittest.TestCase):
@@ -32,7 +31,7 @@ class TestBasicFunctions(unittest.TestCase):
             2
         )
         self.assertEqual(
-            basic.gcd(2**5*3**24*5**8, 2**20*3**13*5**7),
+            basic.gcd(2 ** 5 * 3 ** 24 * 5 ** 8, 2 ** 20 * 3 ** 13 * 5 ** 7),
             2**5*3**13*5**7
         )
 
@@ -81,7 +80,7 @@ class TestBasicFunctions(unittest.TestCase):
             4
         )
         self.assertEqual(
-            basic.pow_find(2**4*3**7*5**12*7**9, 6),
+            basic.pow_find(2 ** 4 * 3 ** 7 * 5 ** 12 * 7 ** 9, 6),
             4
         )
         self.assertEqual(
@@ -122,7 +121,7 @@ class TestBasicFunctions(unittest.TestCase):
 
     def test_binary_search(self):
         self.assertAlmostEqual(
-            basic.binary_search(cos,0, pi),
+            basic.binary_search(cos, 0, pi),
             pi/2,
             places=9
         )
@@ -276,7 +275,7 @@ class TestMiscPrimeFunctions(unittest.TestCase):
             1
         )
         self.assertEqual(
-            primes.legendre_symbol(29+5000*83, 83),
+            primes.legendre_symbol(29 + 5000 * 83, 83),
             1
         )
         self.assertEqual(

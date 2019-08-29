@@ -3,7 +3,7 @@ from random import randint
 
 import numpy as np
 
-from . import basic
+from library import basic
 
 
 class CreatePrimes(object):
@@ -139,7 +139,6 @@ class PrimeCount(object):
                 result += M*stacks[0][M]
         return result
 
-
     def primes_less_than(self, n):
         """Number of primes less than m using Lehmer Formula.
         Good for x<10^12 or so.
@@ -215,14 +214,14 @@ class Factor(object):
         return G
 
 
-
 def is_prime_prob(num, accuracy=10):
     """Probabilistic prime checker (Miller-Rabin)"""
-    s = basic.pow_find(num-1,2)
+    s = basic.pow_find(num - 1, 2)
     d = (num-1)//2**s
     for kkk in range(accuracy):
         a = randint(num//4,3*num//4)
-        if pow(a,d,num)==1: continue
+        if pow(a, d, num) == 1:
+            continue
         check = 1
         for r in range(s):
             if pow(a, 2**r*d, num) == num-1:
@@ -236,15 +235,15 @@ def is_prime_prob(num, accuracy=10):
 def legendre_symbol(n, p):
     """Gives the value (n/p). Note that p must be prime"""
     n = n%p
-    if n==0: return 0
-    if p==2: return 1
-    if n==p-1:
-        if p%4==1: return 1
+    if n == 0: return 0
+    if p == 2: return 1
+    if n == p-1:
+        if p % 4 == 1: return 1
         else: return -1
-    if n==2:
-        if p%8 in [1,7]: return 1
+    if n == 2:
+        if p % 8 in [1, 7]: return 1
         else: return -1
-    if round(n**0.5)**2==n: return 1
+    if round(n**0.5)**2 == n: return 1
     factors = fact(n)
     res = 1
     for key in factors:
@@ -261,7 +260,7 @@ def tonelli_shanks(n, p):
     L = legendre_symbol(n, p)
     if L == -1: raise ValueError("n has no solution or p isn't a prime")
     elif L == 0: return 0
-    S = basic.pow_find(p-1, 2)
+    S = basic.pow_find(p - 1, 2)
     Q = (p-1)//2**S
     if S == 1:
         return pow(n, (p+1)//4, p)

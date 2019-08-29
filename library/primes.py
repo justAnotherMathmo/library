@@ -219,6 +219,7 @@ class Factor(object):
         return G
 
     def get_factor(self, N, trials=10):
+        G = N
         for _ in range(trials):
             G = self._get_factor(N)
             if G != N:
@@ -257,7 +258,7 @@ def legendre_symbol(n, p):
         if p % 8 in [1, 7]: return 1
         else: return -1
     if round(n**0.5)**2 == n: return 1
-    factors = fact(n)
+    factors = Factor(CreatePrimes(basic.int_sqrt(n) + 1)).small(n)
     res = 1
     for key in factors:
         if factors[key] % 2 == 0: continue

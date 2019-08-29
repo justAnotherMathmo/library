@@ -164,11 +164,12 @@ class Factor(object):
 
     def __init__(self, primes):
         self.primes = primes
+        self.c = 3
 
     def _f(self, x, N):
         """Psuedo-random number generator
         Helper function for _get_factor"""
-        return (x**2 + 3) % N
+        return (x**2 + self.c) % N
 
     def small(self, num):
         """Prime factorises num (for small num)"""
@@ -185,10 +186,15 @@ class Factor(object):
                 ma = num ** 0.5 + 1
         return res
 
+    @staticmethod
+    def _get_randint(val):
+        return randint(val//4, 3*val//4)
+
     def _get_factor(self, N):
         """Algorithm for num < 2^70
         Algorithm described pages 7/8 in http://maths-people.anu.edu.au/~brent/pd/rpb051i.pdf"""
-        y, r, q, G = randint(N//4, 3*N//4), 1, 1, 1
+        y, m = self._get_randint(N), self._get_randint(N)
+        r, q, G = 1, 1, 1
         while G == 1:
             x = y
             for _ in range(r):
@@ -203,14 +209,21 @@ class Factor(object):
                 k += m
             r *= 2
         if G == N:
-            ys = y
             while True:
-                ys = self._f(ys)
+                ys = self._f(ys, N)
                 G = basic.gcd(abs(x - ys), N)
                 if G > 1:
                     break
         if G == N:
             raise UserWarning('Number not factored')
+        return G
+
+    def get_factor(self, N, trials=10):
+        for _ in range(trials):
+            G = self._get_factor(N)
+            if G != N:
+                return G
+            self.c = self._get_randint(N)
         return G
 
 
@@ -234,7 +247,7 @@ def is_prime_prob(num, accuracy=10):
 
 def legendre_symbol(n, p):
     """Gives the value (n/p). Note that p must be prime"""
-    n = n%p
+    n = n % p
     if n == 0: return 0
     if p == 2: return 1
     if n == p-1:
@@ -247,11 +260,11 @@ def legendre_symbol(n, p):
     factors = fact(n)
     res = 1
     for key in factors:
-        if factors[key]%2==0: continue
-        if key==2 and p%8 in [3,5]: res*=-1
+        if factors[key] % 2 == 0: continue
+        if key == 2 and p % 8 in [3, 5]: res *= -1
         else:
-            flippy = 1 - 2*(key%4==3)*(p%4==3)
-            res *= legendre_symbol(p%key, key)*flippy
+            flippy = 1 - 2*(key % 4 == 3) * (p % 4 == 3)
+            res *= legendre_symbol(p % key, key) * flippy
     return res
 
 

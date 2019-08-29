@@ -174,7 +174,7 @@ class Factor(object):
     def small(self, num):
         """Prime factorises num (for small num)"""
         res = {}
-        ma = num ** 0.5 + 1
+        ma = basic.int_sqrt(num) + 1
         for i in self.primes.as_array():
             if i > ma:
                 if num != 1: res[num] = 1
@@ -228,6 +228,24 @@ class Factor(object):
         return G
 
 
+def naive_factor(num):
+    """Prime factorises num (for small num)"""
+    res = {}
+    ma = basic.int_sqrt(num) + 1
+    for i in range(2, ma):
+        if i % 2 == 0 and i != 2:
+            continue
+        if i > ma:
+            if num != 1: res[num] = 1
+            break
+        if num % i == 0:
+            k = basic.pow_find(num, i)
+            res[i] = k
+            num = num // i ** k
+            ma = num ** 0.5 + 1
+    return res
+
+
 def is_prime_prob(num, accuracy=10):
     """Probabilistic prime checker (Miller-Rabin)"""
     s = basic.pow_find(num - 1, 2)
@@ -257,8 +275,8 @@ def legendre_symbol(n, p):
     if n == 2:
         if p % 8 in [1, 7]: return 1
         else: return -1
-    if round(n**0.5)**2 == n: return 1
-    factors = Factor(CreatePrimes(basic.int_sqrt(n) + 1)).small(n)
+    if basic.int_sqrt(n) ** 2 == n: return 1
+    factors = naive_factor(n)
     res = 1
     for key in factors:
         if factors[key] % 2 == 0: continue
